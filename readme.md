@@ -4,6 +4,7 @@ Tag input control for SwiftUI
 
 [![standwithukraine](StandWithUkraine.svg)](https://ukrainewar.carrd.co/)
 
+<img src="screenshot.png" width="120">
 
 Installation
 --
