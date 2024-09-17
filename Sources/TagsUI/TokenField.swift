@@ -47,7 +47,6 @@ public struct TokenField<Token, Label, Content>: View where Token:Hashable, Labe
             .frame(minWidth: 100)
             .layoutPriority(-1)
             .tint(selection == nil ? nil : .clear) // nil resets to app's accentColor, not to parent tint
-            .border(Color.blue)
             .focused($isTextFocused)
             .onTapGesture {
                 selection = nil

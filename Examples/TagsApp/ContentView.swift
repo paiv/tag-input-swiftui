@@ -3,10 +3,32 @@ import TagsUI
 
 
 struct ContentView: View {
+    
+    var body: some View {
+        List {
+            TagPanel("sky fades bright stars gleam winds hum and dusk falls still") { tag in
+                TokenView1(token: tag)
+            }
+            TagPanel("a list of plain tokens of equal font size") { tag in
+                TokenView2(token: tag)
+            }
+        }
+        .listStyle(.plain)
+    }
+}
+
+
+struct TagPanel<TagView>: View where TagView:View {
+    private let tokenView: (Tag) -> TagView
     @State private var tags: [Tag] = []
     @State private var selectedTag: Tag?
     @State private var tagSearch: String = ""
     @FocusState private var isTokenFieldFocused: Bool
+
+    init(_ text: String, @ViewBuilder tokenView: @escaping (Tag) -> TagView = { _ in EmptyView() }) {
+        self.tokenView = tokenView
+        self._tags = State(initialValue: text.split(separator: " ").map { Tag(name: String($0)) })
+    }
     
     var body: some View {
         VStack {
@@ -16,8 +38,7 @@ struct ContentView: View {
                 Text("#")
             }, content: {
                 ForEach(tags) { tag in
-                    TokenView(token: tag)
-                        .font(fontForToken(tag.name))
+                    tokenView(tag)
                         .fontWeight(tag == selectedTag ? .bold : .regular)
                         .onTapGesture {
                             selectedTag = tag
@@ -76,21 +97,41 @@ struct ContentView: View {
         }
         selectedTag = nil
     }
+}
+
+
+private struct TokenView1: View {
+    let token: Tag
     
-    private struct TokenView: View {
-        
-        let token: Tag
-        
-        var body: some View {
-            Text(token.name)
-        }
+    var body: some View {
+        Text(token.name)
+            .font(TokenView1.fontForToken(token.name))
+            .padding(4)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke()
+            )
+    }
+    
+    private static func fontForToken(_ text: String) -> Font {
+        let n = max(8, min(48, 36 - 20 * log10(CGFloat(text.count))))
+        return Font.system(size: n)
     }
 }
 
 
-private func fontForToken(_ text: String) -> Font {
-    let n = max(8, min(48, 36 - 20 * log10(CGFloat(text.count))))
-    return Font.system(size: n)
+private struct TokenView2: View {
+    let token: Tag
+    
+    var body: some View {
+        Text(token.name)
+            .foregroundStyle(Color.white)
+            .padding(4)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.purple)
+            )
+    }
 }
 
 
